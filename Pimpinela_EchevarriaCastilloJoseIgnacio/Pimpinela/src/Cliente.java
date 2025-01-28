@@ -6,44 +6,50 @@ import java.net.Socket;
 public class Cliente {
     public static void main(String[] args) {
 
-        String HOST ="127.0.0.1"; //definor dereccion IP para conectarr
-        int PUERTO = 5000; //puerto del servidor
-        //variables para manejo de datos
-        DataInputStream in; //leer datos del cocket
-        DataOutputStream out; //enviar datos del socker
+        String HOST = "127.0.0.1"; // Dirección IP del servidor
+        int PUERTO = 5000; // Puerto del servidor
+        DataInputStream in; // Leer datos del socket
+        DataOutputStream out; // Enviar datos al socket
 
-        try{
-            //creacion de ub socket
-            Socket sc = new Socket(HOST,PUERTO);
+        try {
+            // Creación del socket y conexión al servidor
+            System.out.println("Conectando al servidor...");
+            Socket sc = new Socket(HOST, PUERTO);
+            System.out.println("Conexión establecida.");
 
-            //inicielizacion de flujos de entrada y salida del socker
+            // Inicialización de flujos de entrada y salida del socket
             in = new DataInputStream(sc.getInputStream());
             out = new DataOutputStream(sc.getOutputStream());
 
-            //array con todas las respuestas posibles
-            String[] mensajes = {"¿Quién es?",
-                                 "¿Qué vienes a buscar?",
-                                 "Ya es tarde",
-                                 "Porque ahora soy yo la que quiere estar sin ti"};
+            // Array con todas las respuestas posibles
+            String[] mensajes = {
+                    "¿Quién es?",
+                    "¿Qué vienes a buscar?",
+                    "Ya es tarde",
+                    "Porque ahora soy yo la que quiere estar sin ti"
+            };
 
-            //bucle para el envio de las respuestas
+            // Bucle para el envío de las respuestas
             for (String mensaje : mensajes) {
-                out.writeUTF(mensaje);
-                String respuesta = in.readUTF();
-                System.out.println("Servidor: " + respuesta);
+                System.out.println("Cliente: " + mensaje); // Mensaje enviado al servidor
+                out.writeUTF(mensaje); // Envía el mensaje al servidor
+                String respuesta = in.readUTF(); // Espera la respuesta del servidor
+                System.out.println("Servidor: " + respuesta); // Imprime la respuesta
 
+                // Si hay un error, termina la conversación
                 if ("Error".equals(respuesta)) {
-                    System.out.println("Ocurrio un error de en la conexion");
+                    System.out.println("Error en la comunicacion. Terminando cliente.");
                     break;
                 }
             }
 
-            //cerrar socket
-            sc. close();
+            // Cerrar socket
+            System.out.println("Cerrando conexion");
+            sc.close();
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
-
 }
